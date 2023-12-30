@@ -23,8 +23,13 @@
         "backgroundColor": "#ffffff"
       }
     },
+    "scheme": "todolisttracker",
+
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
