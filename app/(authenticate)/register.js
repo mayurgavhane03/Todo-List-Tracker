@@ -6,45 +6,37 @@ import {
   KeyboardAvoidingView,
   TextInput,
   Pressable,
+  Alert,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { MaterialIcons } from "@expo/vector-icons";
-import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
+import { AntDesign ,Ionicons} from "@expo/vector-icons";
+import { useRouter, } from "expo-router";
 import axios from "axios";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const login = () => {
+const register = () => {
+  const [name,setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const router = useRouter();
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        if (token) {
-          router.replace("/(tabs)/home");
-        }
-      } catch (error) {
-        console.log(error);
+  const handleRegister = () => {
+      const user = { 
+          name:name,
+          email:email,
+          password:password
       }
-    };
-    checkLoginStatus();
-  }, []);
-  
-  const handleLogin = () => {
-    const user = {
-      email: email,
-      password: password,
-    };
 
-    axios.post("http://localhost:3000/login", user).then((response) => {
-      const token = response.data.token;
-      console.log("token",token)
-      AsyncStorage.setItem("authToken", token);
-      router.replace("/(tabs)/home");
-    });
-  };
+      axios.post("https://backend-todo-fx4v.vercel.app//register",user).then((response) => {
+          console.log(response);
+          Alert.alert("Registration successfull","You have been registered succesfully");
+          setEmail("");
+          setPassword("");
+          setName("");
+      }).catch((error) => {
+          Alert.alert("Registration failed","an error ocurred during registration");
+          console.log("error",error)
+      })
+  }
   return (
     <SafeAreaView
       style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
@@ -57,11 +49,36 @@ const login = () => {
       <KeyboardAvoidingView>
         <View style={{ alignItems: "center" }}>
           <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 20 }}>
-            Log in to your account
+            register  to your account
           </Text>
         </View>
 
         <View style={{ marginTop: 70 }}>
+
+        <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 5,
+              backgroundColor: "#E0E0E0",
+              paddingVertical: 5,
+              borderRadius: 5,
+              marginTop: 30,
+            }}
+          >
+            <Ionicons style={{marginLeft:8}} name="person" size={24} color="gray" />
+            <TextInput
+              value={name}
+              onChangeText={(text) => setName(text)}
+              style={{
+                color: "gray",
+                marginVertical: 10,
+                width: 300,
+                fontSize: email ? 17 : 17,
+              }}
+              placeholder="enter your name"
+            />
+          </View>
           <View
             style={{
               flexDirection: "row",
@@ -123,24 +140,11 @@ const login = () => {
             />
           </View>
 
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 12,
-              justifyContent: "space-between",
-            }}
-          >
-            <Text>Keep me logged in</Text>
-            <Text style={{ color: "#007FFF", fontWeight: "500" }}>
-              Forgot Password
-            </Text>
-          </View>
 
           <View style={{ marginTop: 60 }} />
 
           <Pressable
-            onPress={handleLogin}
+          onPress={handleRegister}
             style={{
               width: 200,
               backgroundColor: "#6699CC",
@@ -158,16 +162,13 @@ const login = () => {
                 fontSize: 16,
               }}
             >
-              Login
+              Register
             </Text>
           </Pressable>
 
-          <Pressable
-            onPress={() => router.replace("/register")}
-            style={{ marginTop: 15 }}
-          >
+          <Pressable onPress={() => router.replace("/login")} style={{ marginTop: 15 }}>
             <Text style={{ textAlign: "center", fontSize: 15, color: "gray" }}>
-              Don't have an account? Sign up
+             Already have an account? sign Up
             </Text>
           </Pressable>
         </View>
@@ -176,6 +177,6 @@ const login = () => {
   );
 };
 
-export default login;
+export default register;
 
 const styles = StyleSheet.create({});
