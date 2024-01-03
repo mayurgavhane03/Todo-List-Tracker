@@ -30,3 +30,7 @@
     - and use async storage from expo 
         - install the library 
         - npx expo install @react-native-async-storage/async-storage
+
+
+# install react native modals
+    - npm install react-native-modal

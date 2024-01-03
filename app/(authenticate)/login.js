@@ -19,21 +19,51 @@ const login = () => {
   const [password, setPassword] = useState("");
   const router = useRouter();
 
+  useEffect(() => {
+    const clearAuthToken = async () => {
+  try {
+    await AsyncStorage.removeItem("authToken");
+    console.log("Previous token cleared successfully.");
+  } catch (error) {
+    console.error("Error clearing token:", error);
+    // Handle error while clearing token
+  }
+};
 
-
-  const handleLogin = () => {
-    const user = {
-      email: email,
-      password: password,
+    const checkLoginStatus = async () => {
+      try {
+        const token = await AsyncStorage.getItem("authToken");
+        console.log("Retrieved token:", token);
+        if (token) {
+          console.log("Token found. Navigating to home...");
+          router.replace("/(tabs)/home"); // Ensure this route matches your setup
+        } else {
+          console.log("Token not found. User not logged in.");
+        }
+      } catch (error) {
+        console.error("Error while checking login status:", error);
+      }
     };
+    checkLoginStatus();
+  }, []);
 
-    axios
-      .post("https://backend-todo-fx4v.vercel.app//login", user)
-      .then((response) => {
-        const token = response.data.token;
-        AsyncStorage.setItem("authToken", token);
-        router.replace("/(tabs)/home");
-      });
+  const handleLogin = async () => {
+    try {
+      const user = {
+        email: email,
+        password: password,
+      };
+
+      const response = await axios.post("https://backend-todo-fx4v.vercel.app//login", user);
+      const token = response.data.token;
+
+      console.log("Received token:", token);
+      await AsyncStorage.setItem("authToken", token);
+      router.replace("/tabs/home");
+    } catch (error) {
+      console.error("Login failed:", error);
+      // Handle login failure here (e.g., show error message)
+    }
   };
 
   return (
@@ -74,7 +104,7 @@ const login = () => {
             <TextInput
               placeholder="enter your email"
               value={email}
-              onChange={(text) => setEmail(text)}
+              onChangeText={(text) => setEmail(text)}
               style={{
                 color: "gray",
                 marginVertical: 10,
@@ -105,12 +135,12 @@ const login = () => {
               <TextInput
                 placeholder="enter your password"
                 value={password}
-                onChange={(text) => setPassword(text)}
+                onChangeText={(text) => setPassword(text)}
                 style={{
                   color: "gray",
                   marginVertical: 10,
                   width: 300,
-                  fontSize:  17,
+                  fontSize: 17,
                 }}
               />
             </View>

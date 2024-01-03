@@ -1,181 +1,161 @@
 import {
+  Image,
+  Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   View,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  TextInput,
-  Pressable,
+  TouchableOpacity,
 } from "react-native";
-import React, { useState, useEffect } from "react";
-import { MaterialIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
 import { AntDesign } from "@expo/vector-icons";
-import { useRouter } from "expo-router";
-import axios from "axios";
+import {
+  BottomModal,
+  ModalContent,
+  ModalTitle,
+  SlideAnimation,
+} from "react-native-modals";
+import { TextInput } from "react-native-web";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const router = useRouter();
-  useEffect(() => {
-    const checkLoginStatus = async () => {
-      try {
-        const token = await AsyncStorage.getItem("authToken");
-        if (token) {
-          router.replace("/(tabs)/home");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    checkLoginStatus();
-  }, []);
-  
-  const handleLogin = () => {
-    const user = {
-      email: email,
-      password: password,
-    };
 
-    axios.post("http://localhost:3000/login", user).then((response) => {
-      const token = response.data.token;
-      console.log("token",token)
-      AsyncStorage.setItem("authToken", token);
-      router.replace("/(tabs)/home");
-    });
+
+const Index = () => {
+  const todos = [];
+
+  const [isModalVisible, setModalVisble] = useState(false);
+  const [todo, setTodo] = useState("");
+
+  const clearAuthToken = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken");
+      console.log("Previous token cleared successfully.");
+    } catch (error) {
+      console.error("Error clearing token:", error);
+      // Handle error while clearing token
+    }
   };
+
   return (
-    <SafeAreaView
-      style={{ flex: 1, backgroundColor: "white", alignItems: "center" }}
-    >
-      <View style={{ marginTop: 80 }}>
-        <Text style={{ fontSize: 18, fontWeight: "600", color: "#0066b2" }}>
-          TODO-LIST TRACKER
-        </Text>
+    <>
+      <View
+        style={{
+          marginHorizontal: 10,
+          marginVertical: 10,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 12,
+        }}
+      >
+        <Pressable
+          style={{
+            backgroundColor: "#7cb9e8",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 25,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", textAlign: "center" }}>All</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            backgroundColor: "#7cb9e8",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 25,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Text style={{ color: "white", textAlign: "center" }}>Work</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            backgroundColor: "#7cb9e8",
+            paddingHorizontal: 10,
+            paddingVertical: 6,
+            borderRadius: 25,
+            alignItems: "center",
+            justifyContent: "center",
+            marginRight: "auto",
+          }}
+        >
+          <Text style={{ color: "white", textAlign: "center" }}>Personal</Text>
+        </Pressable>
+        <Pressable>
+          <AntDesign name="pluscircle" size={28} color="#7cb9e8" />
+        </Pressable>
       </View>
-      <KeyboardAvoidingView>
-        <View style={{ alignItems: "center" }}>
-          <Text style={{ fontSize: 16, fontWeight: "600", marginTop: 20 }}>
-            Log in to your account
-          </Text>
-        </View>
 
-        <View style={{ marginTop: 70 }}>
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              backgroundColor: "#E0E0E0",
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
-          >
-            <MaterialIcons
-              style={{ marginLeft: 8 }}
-              name="email"
-              size={24}
-              color="gray"
-            />
-            <TextInput
-              value={email}
-              onChangeText={(text) => setEmail(text)}
+      <ScrollView style={{ backgroundColor: "white", flex: 1 }}>
+        <View style={{ padding: 10 }}>
+          {todos.length > 0 ? (
+            <View></View>
+          ) : (
+            <View
               style={{
-                color: "gray",
-                marginVertical: 10,
-                width: 300,
-                fontSize: email ? 17 : 17,
-              }}
-              placeholder="enter your email"
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5,
-              backgroundColor: "#E0E0E0",
-              paddingVertical: 5,
-              borderRadius: 5,
-              marginTop: 30,
-            }}
-          >
-            <AntDesign
-              style={{ marginLeft: 8 }}
-              name="lock1"
-              size={24}
-              color="gray"
-            />
-            <TextInput
-              value={password}
-              secureTextEntry={true}
-              onChangeText={(text) => setPassword(text)}
-              style={{
-                color: "gray",
-                marginVertical: 10,
-                width: 300,
-                fontSize: email ? 17 : 17,
-              }}
-              placeholder="enter your password"
-            />
-          </View>
-
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 12,
-              justifyContent: "space-between",
-            }}
-          >
-            <Text>Keep me logged in</Text>
-            <Text style={{ color: "#007FFF", fontWeight: "500" }}>
-              Forgot Password
-            </Text>
-          </View>
-
-          <View style={{ marginTop: 60 }} />
-
-          <Pressable
-            onPress={handleLogin}
-            style={{
-              width: 200,
-              backgroundColor: "#6699CC",
-              padding: 15,
-              borderRadius: 6,
-              marginLeft: "auto",
-              marginRight: "auto",
-            }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                color: "white",
-                fontWeight: "bold",
-                fontSize: 16,
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 130,
+                marginLeft: "auto",
+                marginRight: "auto",
               }}
             >
-              Login
-            </Text>
-          </Pressable>
-
-          <Pressable
-            onPress={() => router.replace("/register")}
-            style={{ marginTop: 15 }}
-          >
-            <Text style={{ textAlign: "center", fontSize: 15, color: "gray" }}>
-              Don't have an account? Sign up
-            </Text>
-          </Pressable>
+              <Image
+                style={{ width: 200, height: 200, resizeMode: "contain" }}
+                source={{
+                  uri:
+                    "https://cdn-icons-png.flaticon.com/128/2387/2387679.png",
+                }}
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginTop: 15,
+                  fontWeight: "600",
+                  textAlign: "center",
+                }}
+              >
+                Not Task for Today
+              </Text>
+              <Pressable style={{ marginTop: 15 }}>
+                <AntDesign name="pluscircle" size={28} color="#7cb9e8" />
+                <TouchableOpacity onPress={clearAuthToken}>
+                  <Text>mayur</Text>
+                </TouchableOpacity>
+              </Pressable>
+            </View>
+          )}
         </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      </ScrollView>
+
+      <BottomModal
+        onHardwareBackPress={() => setModalVisble(!isModalVisible)}
+        onBackdropPress={() => setModalVisble(!isModalVisible)}
+        swipeDirection={["up", "down"]}
+        swipeThreshold={200}
+        modalTitle={<ModalTitle title="Add a TODO" />}
+        modalAnimation={
+          new SlideAnimation({
+            slideFrom: "bottom",
+          })
+        }
+        visible={isModalVisible}
+        onTouchOutside={() => setmodalVisble(!isModalVisible)}
+      >
+        <ModalContent style={{ width: "100%", height: 200 }}>
+          <View style={{}}>
+            <TextInput value={todo} onChangeText={(text) => setTodo(text)} />
+          </View>
+        </ModalContent>
+      </BottomModal>
+    </>
   );
 };
 
-export default login;
+export default Index;
 
 const styles = StyleSheet.create({});
