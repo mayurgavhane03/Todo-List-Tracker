@@ -20,15 +20,6 @@ const login = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const clearAuthToken = async () => {
-  try {
-    await AsyncStorage.removeItem("authToken");
-    console.log("Previous token cleared successfully.");
-  } catch (error) {
-    console.error("Error clearing token:", error);
-    // Handle error while clearing token
-  }
-};
 
     const checkLoginStatus = async () => {
       try {
@@ -54,12 +45,12 @@ const login = () => {
         password: password,
       };
 
-      const response = await axios.post("https://backend-todo-fx4v.vercel.app//login", user);
+      const response = await axios.post("https://backend-todo-fx4v.vercel.app/login", user);
       const token = response.data.token;
 
       console.log("Received token:", token);
       await AsyncStorage.setItem("authToken", token);
-      router.replace("/tabs/home");
+      router.replace("/(tabs)/home");
     } catch (error) {
       console.error("Login failed:", error);
       // Handle login failure here (e.g., show error message)
