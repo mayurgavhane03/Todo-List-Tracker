@@ -17,7 +17,7 @@ import {
   SlideAnimation,
 } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useRouter } from "expo-router";
+import { usePathname, useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import moment from "moment";
@@ -35,70 +35,7 @@ const Index = () => {
   const [marked, setMarked] = useState(false);
   const router = useRouter();
 
-  const clearAuthToken = async () => {
-    try {
-      await AsyncStorage.removeItem("authToken");
-      console.log("Previous token cleared successfully.");
-    } catch (error) {
-      console.error("Error clearing token:", error);
-      // Handle error while clearing token
-    }
-  };
 
-  const addTodo = async () => {
-    try {
-      const todoData = {
-        title: todo,
-        category: category,
-      };
-
-      axios
-        .post(
-          "https://backend-todo-fx4v.vercel.app/todos/6597f7273c197fd5f772569e",
-          todoData
-        )
-        .then((response) => {
-          console.log(response);
-        })
-        .catch((error) => {
-          console.log("error", error);
-        });
-      setModalVisble(false);
-      await getUserTodos();
-      setTodo("");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    getUserTodos();
-  }, [marked, isModalVisible]);
-
-  const getUserTodos = async () => {
-    try {
-      const response = await axios.get(
-        `https://backend-todo-fx4v.vercel.app/users/6597f7273c197fd5f772569e/todos`
-      );
-
-      console.log(response.data.todos);
-      setTodos(response.data.todos);
-
-      const fetchedTodos = response.data.todos || [];
-      const pending = fetchedTodos.filter(
-        (todo) => todo.status !== "completed"
-      );
-
-      const completed = fetchedTodos.filter(
-        (todo) => todo.status === "completed"
-      );
-
-      setPendingTodos(pending);
-      setCompletedTodos(completed);
-    } catch (error) {
-      console.log("error", error);
-    }
-  };
 
   const suggestions = [
     {
@@ -131,20 +68,93 @@ const Index = () => {
     },
   ];
 
+
+  const clearAuthToken = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken");
+      console.log("Previous token cleared successfully.");
+    } catch (error) {
+      console.error("Error clearing token:", error);
+      // Handle error while clearing token
+    }
+  };
+
+  const addTodo = async () => {
+    try {
+      const todoData = {
+        title: todo,
+        category: category,
+      };
+
+      axios
+        .post(
+          "https://backend-todo-fx4v.vercel.app/todos/6597f7273c197fd5f772569e",
+          todoData
+        )
+        .then((response) => {
+          console.log("response from home page",response);
+        })
+        .catch((error) => {
+          console.log("error", error);
+        });
+      setModalVisble(false);
+      await getUserTodos();
+      setTodo("");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getUserTodos();
+  }, [marked, isModalVisible]);
+
+  const getUserTodos = async () => {
+    try {
+      const response = await axios.get(
+        `https://backend-todo-fx4v.vercel.app/users/6597f7273c197fd5f772569e/todos`
+      );
+
+
+      //this  is todos DATA
+
+      // console.log(response.data.todos);
+
+
+
+      setTodos(response.data.todos);
+
+      const fetchedTodos = response.data.todos || [];
+      const pending = fetchedTodos.filter(
+        (todo) => todo.status !== "completed"
+      );
+
+      const completed = fetchedTodos.filter(
+        (todo) => todo.status === "completed"
+      );
+
+      setPendingTodos(pending);
+      setCompletedTodos(completed);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+
   const markTodoAsCompleted = async (todoId) => {
     try {
       setMarked(true);
       const response = await axios.patch(
         `https://backend-todo-fx4v.vercel.app/todos/${todoId}/complete`
       );
-      console.log("data", response.data);
+      // console.log("data", response.data);
     } catch (err) {
       console.log("error", err.message);
     }
   };
 
-  console.log("cpletd todos", completedTodos);
-  console.log("pendings", pendingTodos);
+/*   console.log("cpletd todos", completedTodos);
+  console.log("pendings", pendingTodos); */
 
   return (
     <>
@@ -157,30 +167,7 @@ const Index = () => {
           gap: 12,
         }}
       >
-        <Pressable
-          style={{
-            backgroundColor: "#7cb9e8",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "white", textAlign: "center" }}>All</Text>
-        </Pressable>
-        <Pressable
-          style={{
-            backgroundColor: "#7cb9e8",
-            paddingHorizontal: 10,
-            paddingVertical: 6,
-            borderRadius: 25,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Text style={{ color: "white", textAlign: "center" }}>Work</Text>
-        </Pressable>
+        
         <Pressable
           style={{
             backgroundColor: "#7cb9e8",
@@ -192,7 +179,7 @@ const Index = () => {
             marginRight: "auto",
           }}
         >
-          <Text style={{ color: "white", textAlign: "center" }}>Personal</Text>
+          <Text style={{ color: "white", textAlign: "center" }}>Add ToDo Work </Text>
         </Pressable>
         <Pressable>
           <AntDesign
@@ -211,6 +198,19 @@ const Index = () => {
               {pendingTodos?.length > 0 && <Text>Task to Do {today} </Text>}
               {pendingTodos.map((item, index) => (
                 <Pressable
+                  /*    onPress={() => {
+                  router?.push({
+                    pathname: "/home/info",
+                    params: {
+                      id: item._id,
+                      title: item?.title,
+                      category: item?.category,
+                      createdAt: item?.createdAt,
+                      dueDate: item?.dueDate,
+                    },
+                  });
+                  }} */
+
                   key={index}
                   style={{
                     backgroundColor: "#e0e0e0",
@@ -226,7 +226,12 @@ const Index = () => {
                       gap: 10,
                     }}
                   >
-                    <Entypo onPress={()=>markTodoAsCompleted(item?._id)} name="circle" size={18} color="black" />
+                    <Entypo
+                      onPress={() => markTodoAsCompleted(item?._id)}
+                      name="circle"
+                      size={18}
+                      color="black"
+                    />
                     <Text style={{ flex: 1 }}>{item?.title}</Text>
                     <Feather name="flag" size={20} color="black" />
                   </View>
@@ -282,8 +287,16 @@ const Index = () => {
                           gap: 10,
                         }}
                       >
-                       <FontAwesome name="circle" size={18} color="gray" />
-                        <Text style={{ flex: 1, textDecorationLine:"line-through", color: "gray" }}>{item?.title}</Text>
+                        <FontAwesome name="circle" size={18} color="gray" />
+                        <Text
+                          style={{
+                            flex: 1,
+                            textDecorationLine: "line-through",
+                            color: "gray",
+                          }}
+                        >
+                          {item?.title}
+                        </Text>
                         <Feather name="flag" size={20} color="gray" />
                       </View>
                     </Pressable>

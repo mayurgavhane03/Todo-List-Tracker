@@ -34,3 +34,12 @@
 
 # install react native modals
     - npm install react-native-modal
+
+
+# instll moment for  date and time formats
+
+# install react native calendar
+-  npm i react-native-calendar
+
+
+# install react-native-chart-kit
