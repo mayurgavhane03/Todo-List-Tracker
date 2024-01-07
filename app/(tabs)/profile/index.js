@@ -1,11 +1,80 @@
-import { StyleSheet, Text, View, Image,Dimensions  } from "react-native";
+import { StyleSheet, Text, View, Image,Dimensions, Pressable  } from "react-native";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { LineChart } from "react-native-chart-kit";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { decode } from 'base-64'; // Import base64 library
+
+
+
+
+
+
+
+
+
+
+
 
 const index = () => {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [pedingTasks, setPendingTasks] = useState(0);
+  const [token, setToken] = useState("")
+  const [decodedPayload, setDecodedPayload] = useState(null);
+
+  const router = useRouter();
+
+
+
+  const decodeToken = (token) => {
+    const parts = token.split('.');
+    if (parts.length !== 3) {
+      throw new Error('Invalid token format');
+    }
+
+    const [, payload] = parts;
+
+    // Decoding the payload from base64
+    const decodedPayload = decode(payload);
+    const parsedPayload = JSON.parse(decodedPayload);
+
+    return parsedPayload;
+  };
+  useEffect(() => {
+    try {
+      if (token) {
+        const decodedPayload = decodeToken(token);
+        console.log(decodedPayload)
+        setDecodedPayload(decodedPayload);
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }, [token]);
+
+
+
+  const FetchedUserName = ()=>{
+    try{
+
+    }catch(error){
+      console.log("errr", error)
+    }
+  }
+
+
+  const clearAuthToken = async () => {
+    try {
+      await AsyncStorage.removeItem("authToken");
+      console.log("Previous token cleared successfully.");
+      router.replace("/(authenticate)/login"); // Ensure this route matches your setup
+
+    } catch (error) {
+      console.error("Error clearing token:", error);
+      // Handle error while clearing token
+    }
+  };
 
   const fetchTaskData = async () => {
     try {
@@ -15,10 +84,17 @@ const index = () => {
       const { totalCompletedTodos, totalPendingTodos } = response.data;
       setCompletedTasks(totalCompletedTodos);
       setPendingTasks(totalPendingTodos);
+
+
+      const token = await AsyncStorage.getItem("authToken");
+      setToken(token);
+      console.log("Retrieved in profile token:", token);
     } catch (err) {
       console.log("error", err);
     }
   };
+
+   
 
   useEffect(() => {
     fetchTaskData();
@@ -45,7 +121,10 @@ const index = () => {
           </Text>
         </View>
         <View style={{ marginLeft:25,fontWeight: "bold"}}>
+          <Pressable onPress={clearAuthToken}>
           <Text style={{ fontSize: 16, fontWeight: "600" }}>LogOut</Text>
+          </Pressable>
+          
         </View>
       </View>
       <View style={{ marginVertical: 12 }}>
@@ -68,7 +147,7 @@ const index = () => {
               alignContent: "center",
             }}
           >
-            <Text style={{ textAlign: "center", fontSize:16, fontWeight:"bold", }}>{completedTasks}</Text>
+            <Text style={{ textAlign: "center", fontSize:16, fontWeight:"bold" }}>{completedTasks}</Text>
             <Text>completed Tasks</Text>
           </View>
           <View
@@ -81,7 +160,7 @@ const index = () => {
               alignContent: "center",
             }}
           >
-            <Text  style={{ textAlign: "center", fontSize:16, fontweight:"bold", }}>{pedingTasks}</Text>
+            <Text  style={{ textAlign: "center", fontSize:16, fontWeight:"bold", }}>{pedingTasks}</Text>
             <Text>pending Tasks</Text>
           </View>
         </View>

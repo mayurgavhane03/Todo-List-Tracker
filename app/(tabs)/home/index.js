@@ -8,8 +8,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
-import { AntDesign, Feather } from "@expo/vector-icons";
+import React, { useEffect, useState, useContext } from "react";
 import {
   BottomModal,
   ModalContent,
@@ -18,11 +17,10 @@ import {
 } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePathname, useRouter } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import moment from "moment";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons,Entypo, FontAwesome,MaterialIcons,AntDesign, Feather } from "@expo/vector-icons";
+
 const Index = () => {
   const today = moment().format("MMM Do");
 
