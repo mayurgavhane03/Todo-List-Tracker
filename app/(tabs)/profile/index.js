@@ -5,7 +5,7 @@ import { LineChart } from "react-native-chart-kit";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { decode } from 'base-64'; // Import base64 library
-
+import { userContext } from "./userContext";
 
 
 
@@ -20,6 +20,9 @@ import { decode } from 'base-64'; // Import base64 library
 const index = () => {
   const [completedTasks, setCompletedTasks] = useState(0);
   const [pedingTasks, setPendingTasks] = useState(0);
+  
+  
+  
   const [token, setToken] = useState("")
   const [decodedPayload, setDecodedPayload] = useState(null);
 
@@ -55,13 +58,7 @@ const index = () => {
 
 
 
-  const FetchedUserName = ()=>{
-    try{
-
-    }catch(error){
-      console.log("errr", error)
-    }
-  }
+ 
 
 
   const clearAuthToken = async () => {
@@ -75,6 +72,8 @@ const index = () => {
       // Handle error while clearing token
     }
   };
+
+  
 
   const fetchTaskData = async () => {
     try {
@@ -103,6 +102,8 @@ const index = () => {
   // console.log("pending", pedingTasks);
 
   return (
+    <userContext.Provider value={decodedPayload} >
+
     <View style={{ padding: 10, flex: 1, backgroundColor: "white" }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <Image
@@ -221,6 +222,7 @@ const index = () => {
       </View>
       
     </View>
+    </userContext.Provider>
   );
 };
 

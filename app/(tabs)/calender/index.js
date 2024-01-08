@@ -1,14 +1,21 @@
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useContext } from "react";
 import moment from "moment";
 import { Calendar } from "react-native-calendars";
 import axios from "axios";
 import { FontAwesome, Feather, MaterialIcons } from "@expo/vector-icons";
+import { userContext } from "../profile/userContext";
+
 
 const index = () => {
   const today = moment().format("YYYY-MM-DD");
   const [selectedDate, setSelectedDate] = useState(today);
   const [todos, setTodos] = useState([]);
+
+
+
+  const tokenData =  useContext(userContext)
+  console.log("data from calender", tokenData);
   const fetchCompletedTodos = async () => {
     try {
       const response = await axios.get(

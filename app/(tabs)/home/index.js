@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState } from "react";
+import { AntDesign, Feather } from "@expo/vector-icons";
 import {
   BottomModal,
   ModalContent,
@@ -17,9 +18,12 @@ import {
 } from "react-native-modals";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { usePathname, useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import moment from "moment";
-import { Ionicons,Entypo, FontAwesome,MaterialIcons,AntDesign, Feather } from "@expo/vector-icons";
+import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
+import { decode } from 'base-64';
 
 const Index = () => {
   const today = moment().format("MMM Do");
@@ -32,9 +36,11 @@ const Index = () => {
   const [completedTodos, setCompletedTodos] = useState(["Complete"]);
   const [marked, setMarked] = useState(false);
   const router = useRouter();
-
-
-
+  const [token, setToken] = useState("");
+  const [decodedPayload, setDecodedPayload] = useState(null);
+  const [decodedId, setDecodedId] = useState(null);
+  const [todoResponse, setTodoResponse] = useState([])
+  const [newDecodedId, setNewDecodedId] = useState()
   const suggestions = [
     {
       id: "0",
@@ -67,6 +73,60 @@ const Index = () => {
   ];
 
 
+
+  
+
+  //getting token and decoding it
+  
+  const getToken = async() =>{
+    const token = await AsyncStorage.getItem("authToken");
+    setToken(token);
+  }
+  useEffect(() => {
+    getToken()
+  })
+console.log("Decoded Id", decodedId);
+
+useEffect(()=>{
+  if(decodedId){
+    setNewDecodedId(decodedId);
+    console.log("newDecoded Id", newDecodedId);
+  }
+})
+
+
+const decodeToken = (token) => {
+  const parts = token.split('.');
+  if (parts.length !== 3) {
+    throw new Error('Invalid token format');
+  }
+
+  const [, payload] = parts;
+
+  // Decoding the payload from base64
+  const decodedPayload = decode(payload);
+  const parsedPayload = JSON.parse(decodedPayload);
+
+  return parsedPayload;
+};
+
+
+useEffect(() => {
+  try {
+    if (token) {
+      const decodedPayload = decodeToken(token);
+      console.log(decodedPayload)
+      setDecodedPayload(decodedPayload);
+      // console.log("decoded Id",decodedPayload.userId)
+      setDecodedId(decodedPayload.userId)
+    }
+  } catch (error) {
+    console.error(error.message);
+  }
+}, [token]);
+
+
+
   const clearAuthToken = async () => {
     try {
       await AsyncStorage.removeItem("authToken");
@@ -77,6 +137,14 @@ const Index = () => {
     }
   };
 
+
+
+
+
+
+  
+
+  /* "https://backend-todo-fx4v.vercel.app/todos/6597f7273c197fd5f772569e", */
   const addTodo = async () => {
     try {
       const todoData = {
@@ -86,11 +154,13 @@ const Index = () => {
 
       axios
         .post(
-          "https://backend-todo-fx4v.vercel.app/todos/6597f7273c197fd5f772569e",
+         `https://backend-todo-fx4v.vercel.app/todos/${newDecodedId}`,
           todoData
         )
         .then((response) => {
-          console.log("response from home page",response);
+          console.log("response from home page", response);
+          setTodoResponse(response);
+
         })
         .catch((error) => {
           console.log("error", error);
@@ -103,41 +173,75 @@ const Index = () => {
     }
   };
 
-  useEffect(() => {
-    getUserTodos();
-  }, [marked, isModalVisible]);
+ /*  useEffect(() => {
+    const delay = 3000; // 3 seconds
+  
+    const timer = setTimeout(() => {
+      getUserTodos();
+    }, delay);
+  
+    return () => clearTimeout(timer); // Clear the timeout on component unmount or dependency change
+  }, [marked, isModalVisible, todoResponse]);
+   */
+
+
+
+
 
   const getUserTodos = async () => {
     try {
       const response = await axios.get(
-        `https://backend-todo-fx4v.vercel.app/users/6597f7273c197fd5f772569e/todos`
+        `https://backend-todo-fx4v.vercel.app/users/${newDecodedId}/todos`
       );
-
-
-      //this  is todos DATA
-
-      // console.log(response.data.todos);
-
-
-
-      setTodos(response.data.todos);
-
+  
       const fetchedTodos = response.data.todos || [];
-      const pending = fetchedTodos.filter(
-        (todo) => todo.status !== "completed"
-      );
-
-      const completed = fetchedTodos.filter(
-        (todo) => todo.status === "completed"
-      );
-
+      const pending = fetchedTodos.filter(todo => todo.status !== "completed");
+      const completed = fetchedTodos.filter(todo => todo.status === "completed");
+  
+      setTodos(fetchedTodos);
       setPendingTodos(pending);
       setCompletedTodos(completed);
     } catch (error) {
-      console.log("error", error);
+      console.error("Error fetching user todos:", error); // Log the error for debugging
+      // Handle error state or display an error message to the user
     }
   };
+  
 
+
+
+
+  useEffect(() => {
+    let intervalId; // Declare a variable to hold the interval ID
+  
+    // Function to fetch todos
+    const fetchTodos = () => {
+      try {
+        if (newDecodedId) {
+          console.log("try catch ", newDecodedId);
+          getUserTodos();
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+  
+    // Set an interval to call fetchTodos every 2 seconds
+    intervalId = setInterval(fetchTodos, 2000);
+  
+    // Clear the interval on component unmount or dependency change
+    return () => clearInterval(intervalId);
+  }, [newDecodedId, marked, isModalVisible, todoResponse, getUserTodos]);
+  
+
+  const handleCompleted = () =>{
+    Toast.show({
+      type: 'success',
+      text1: 'Sign-in successful!',
+      position: 'top',
+      visibilityTime: 2000 // Duration in milliseconds
+    });
+  }
 
   const markTodoAsCompleted = async (todoId) => {
     try {
@@ -146,13 +250,27 @@ const Index = () => {
         `https://backend-todo-fx4v.vercel.app/todos/${todoId}/complete`
       );
       // console.log("data", response.data);
+      
     } catch (err) {
       console.log("error", err.message);
     }
   };
 
-/*   console.log("cpletd todos", completedTodos);
+  /*   console.log("cpletd todos", completedTodos);
   console.log("pendings", pendingTodos); */
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -165,7 +283,6 @@ const Index = () => {
           gap: 12,
         }}
       >
-        
         <Pressable
           style={{
             backgroundColor: "#7cb9e8",
@@ -176,8 +293,11 @@ const Index = () => {
             justifyContent: "center",
             marginRight: "auto",
           }}
+          onPress={() => setModalVisble(!isModalVisible)}
         >
-          <Text style={{ color: "white", textAlign: "center" }}>Add ToDo Work </Text>
+          <Text style={{ color: "white", textAlign: "center" }}>
+            Add ToDo Work{" "}
+          </Text>
         </Pressable>
         <Pressable>
           <AntDesign
@@ -225,7 +345,7 @@ const Index = () => {
                     }}
                   >
                     <Entypo
-                      onPress={() => markTodoAsCompleted(item?._id)}
+                      onPress={() =>{ markTodoAsCompleted(item?._id),onPress={handleCompleted} }}
                       name="circle"
                       size={18}
                       color="black"
