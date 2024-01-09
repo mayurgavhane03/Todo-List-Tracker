@@ -1,45 +1,93 @@
-# creating main app
-    -  npx create-expo-app my app
+# My Awesome App
 
-# install expo router
-    -npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+## Description
 
-# Chnage main in package.json
-    - This will change the directory structure of the app 
-    - To app/index.js
+This application is built using Expo and React Native, providing various functionalities including user authentication, API integration, and UI components for scheduling and data visualization.
+
+## Installation
+
+### Setting Up the Main App
+
+1. **Create Expo App:**
+    ```bash
+    npx create-expo-app my-app
+    ```
+
+2. **Install Dependencies:**
+    ```bash
+    npx expo install expo-router react-native-safe-area-context react-native-screens expo-linking expo-constants expo-status-bar
+    ```
+
+3. **Modify `package.json` Main:**
+    ```json
     {
-  "main": "expo-router/entry"
+      "main": "app/index.js"
     }
+    ```
 
-# change scheme in app.json
+4. **Adjust `app.json` Scheme:**
+    ```json
     {
-  "scheme": "your-app-scheme"
+      "scheme": "your-app-scheme"
     }
+    ```
 
-# create api folder
-    - create package.json ==> npm init
-    - add or install  dependecies 
-        =>  yarn add body-parser cors express mongoose nodemon jsonwebtoken
-            -create index.js
-            -In script object to start directly through nodemon "start": "nodemon index.js",
-    - create schemas for user and Todo
-    -crate post and get request 
+### API Setup
 
+1. **Create API Folder:**
+    - Initialize `package.json`: `npm init`
+    - Install Dependencies: `yarn add body-parser cors express mongoose nodemon jsonwebtoken`
+    - Implement API functionalities in `index.js`
 
-# create Sign in and login Page 
-    - and use async storage from expo 
-        - install the library 
-        - npx expo install @react-native-async-storage/async-storage
+### Sign In and Login Pages
 
+1. **Utilize Async Storage:**
+    - Install Library:
+        ```bash
+        npx expo install @react-native-async-storage/async-storage
+        ```
 
-# install react native modals
-    - npm install react-native-modal
+### Additional Functionality
 
+1. **React Native Modals:**
+    ```bash
+    npm install react-native-modal
+    ```
 
-# instll moment for  date and time formats
+2. **Moment for Date & Time:**
+    ```bash
+    npm install moment
+    ```
 
-# install react native calendar
--  npm i react-native-calendar
+3. **React Native Calendar:**
+    ```bash
+    npm install react-native-calendar
+    ```
 
+4. **React Native Chart Kit:**
+    ```bash
+    npm install react-native-chart-kit
+    ```
 
-# install react-native-chart-kit
+## Usage
+
+1. **Run the App:**
+    ```bash
+    npm start
+    ```
+    This will start the development server for your app.
+
+2. **API Usage:**
+    - Start your API server:
+        ```bash
+        npm start
+        ```
+    - Access API endpoints for user authentication and data retrieval.
+
+## Contributing
+
+Contributions are welcome! Feel free to fork the repository and submit pull requests to enhance the application.
+
+## License
+
+This project is Made With ❤️ by Mayur Gavhane
