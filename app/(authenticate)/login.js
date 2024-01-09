@@ -44,18 +44,26 @@ const login = () => {
         email: email,
         password: password,
       };
-
+  
       const response = await axios.post("https://backend-todo-fx4v.vercel.app/login", user);
       const token = response.data.token;
-
+  
       console.log("Received token:", token);
       await AsyncStorage.setItem("authToken", token);
       router.replace("/(tabs)/home");
     } catch (error) {
       console.error("Login failed:", error);
-      // Handle login failure here (e.g., show error message)
+      if (error.response && error.response.status === 401) {
+        // Unauthorized - Invalid credentials
+        alert("Invalid username or password. Please try again.");
+      } else {
+        // Other errors (network issues, server errors, etc.)
+        // Handle appropriately, e.g., show a generic error message
+        alert("An error occurred. Please try again later.");
+      }
     }
   };
+  
 
   return (
     <SafeAreaView

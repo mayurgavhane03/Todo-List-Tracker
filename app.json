@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Todolisttracker",
+    "name": "Todo List Tracker",
     "slug": "Todolisttracker",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,12 +24,25 @@
       }
     },
     "scheme": "todolisttracker",
-
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "4e9119ee-49b3-4ed0-ad64-ea66600fc3bf"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/4e9119ee-49b3-4ed0-ad64-ea66600fc3bf"
+    }
   }
 }

@@ -84,6 +84,15 @@ This application is built using Expo and React Native, providing various functio
         ```
     - Access API endpoints for user authentication and data retrieval.
 
+
+
+## Deployment 
+
+    - Use this Documentation 
+        ```bash
+        https://docs.expo.dev/eas-update/migrate-from-classic-updates/
+        ```
+
 ## Contributing
 
 Contributions are welcome! Feel free to fork the repository and submit pull requests to enhance the application.
