@@ -1,32 +1,30 @@
-const mongoose = require('mongoose');
-const { touchProps } = require('react-native-web/dist/cjs/modules/forwardedProps');
+const mongoose = require("mongoose");
 
-
-const TodoSchema =  new mongoose.Schema({
+const todoSchema = new mongoose.Schema({
     title:{
-        type: String, 
-        required: true 
+        type:String,
+        required:true
     },
     status:{
-        type: String, 
-        enum:["pending", "completed"],
+        type:String,
+        enum:["pending","completed"],
         default:"pending"
-
     },
     category:{
-        type: String, 
-        required: true
+        type:String,
+        required:true,
     },
     dueDate:{
-        type: String, 
-        required: true
+        type:String,
+        required:true
     },
     createdAt:{
-        type: Date,
-        default: Date.now()
+        type:Date,
+        default:Date.now
     }
 });
 
 
-const Todo =  mongoose.model('Todo', TodoSchema);
-module.exports =  Todo; 
+const Todo = mongoose.model("Todo",todoSchema);
+
+module.exports = Todo

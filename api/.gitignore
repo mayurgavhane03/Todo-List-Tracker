@@ -1,16 +1,39 @@
-# Ignore node_modules directory
-node_modules/
+# Ignore system-specific files
+.DS_Store             # Mac OS
+Thumbs.db             # Windows
 
-# Ignore log files
-*.log
+# Ignore IDE or editor files
+.vscode/              # Visual Studio Code
+.idea/                # IntelliJ IDEA
+*.sublime-project     # Sublime Text
+*.sublime-workspace   # Sublime Text
 
-# Ignore environment configuration files
+# Ignore compiled binaries or build directories
+/build/
+/bin/
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Ignore dependency directories or files
+/node_modules/
+/vendor/
+/yarn.lock
+Gemfile.lock
+
+# Ignore sensitive or environment-specific information
 .env
+.secret_key
+config.ini
 
-# Ignore build directories
-build/
-dist/
+# Ignore logs and generated files
+*.log
+*.cache
 
-# Ignore OS-specific or editor-generated files
-.DS_Store
-.idea/
+# Ignore specific files
+specific_file.txt
+
+# Ignore everything in a directory except one file
+directory/*
+!directory/important_file.txt
