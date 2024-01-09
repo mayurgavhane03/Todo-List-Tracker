@@ -87,14 +87,11 @@ This application is built using Expo and React Native, providing various functio
 
 
 ## Deployment 
-
-    ## Deployment 
-
-    - **Use this Documentation:**
+    - Use this Documentation:
     ```bash
-    https://docs.expo.dev/eas-update/migrate-from-classic-updates/
+        https://docs.expo.dev/eas-update/migrate-from-classic-updates/
     ```
-    - **This is the only way to deploy the app on the Expo store.**
+    - This is the only way to deploy the app on the Expo store.
 
 
 
