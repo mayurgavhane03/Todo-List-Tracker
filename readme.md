@@ -88,7 +88,7 @@ This application is built using Expo and React Native, providing various functio
 
 ## Deployment 
 
-    - Use this Documentation 
+    - Use this Documentation :
         ```bash
         https://docs.expo.dev/eas-update/migrate-from-classic-updates/
         ```
